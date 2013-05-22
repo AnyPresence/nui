@@ -15,12 +15,14 @@
 {
     NSString *fontSizeProperty = @"font-size";
     
+    CGFloat fontSize = [NUISettings getFloat:fontSizeProperty withClass:className] ?: textField.font.pointSize;
+    
     // Set font name
     if ([NUISettings hasProperty:@"font-name" withClass:className]) {
-        [textField setFont:[UIFont fontWithName:[NUISettings get:@"font-name" withClass:className] size:[NUISettings getFloat:fontSizeProperty withClass:className]]];
+        [textField setFont:[UIFont fontWithName:[NUISettings get:@"font-name" withClass:className] size:fontSize]];
         // If font-name is undefined but font-size is defined, use systemFont
     } else if ([NUISettings getFloat:fontSizeProperty withClass:className]) {
-        [textField setFont:[UIFont systemFontOfSize:[NUISettings getFloat:fontSizeProperty withClass:className]]];
+        [textField setFont:[UIFont systemFontOfSize:fontSize]];
     }
     
     // Set text alignment

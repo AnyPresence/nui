@@ -23,6 +23,11 @@
         [textField setFont:[UIFont systemFontOfSize:[NUISettings getFloat:fontSizeProperty withClass:className]]];
     }
     
+    // Set text alignment
+    if ([NUISettings hasProperty:@"text-align" withClass:className]) {
+        [textField setTextAlignment:[NUISettings getTextAlignment:@"text-align" withClass:className]];
+    }
+    
     // Set font color
     if ([NUISettings hasProperty:@"font-color" withClass:className]) {
         [textField setTextColor:[NUISettings getColor:@"font-color" withClass:className]];

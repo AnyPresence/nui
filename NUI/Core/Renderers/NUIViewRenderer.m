@@ -6,6 +6,7 @@
 //  Copyright (c) 2012 Tom Benner. All rights reserved.
 //
 
+#import <objc/runtime.h>
 #import <QuartzCore/QuartzCore.h>
 #import "NUIGraphics.h"
 #import "NUIViewRenderer.h"
@@ -132,6 +133,36 @@
     if (height != view.frame.size.height || width != view.frame.size.width) {
         view.frame = CGRectMake(view.frame.origin.x, view.frame.origin.y, width, height);
     }
+}
+
++ (void)renderExtendedProperties:(UIView*)view withClass:(NSString*)className
+{
+    // Extended properties
+    for (NSString * property in [NUISettings extendedPropertiesWithClass:className]) {
+        objc_property_t prop = class_getProperty([view class], [property UTF8String]);
+        if (prop) {
+            char *setterName = property_copyAttributeValue(prop, "S");
+            NSString *setter = (setterName ?
+                                [NSString stringWithFormat:@"%s", setterName] :
+                                [NSString stringWithFormat:@"set%@:", [property capitalizedString]]);
+            
+            SEL selector = NSSelectorFromString(setter);
+            NSMethodSignature* signature = [[view class] instanceMethodSignatureForSelector:selector];
+            NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:signature];
+            [invocation setTarget:view];
+            [invocation setSelector:selector];
+            
+            char *type = property_copyAttributeValue(prop, "T");
+            if (*type == 'c') {
+                BOOL value = [NUISettings getBoolean:[NUISettings getExtendedPropertyName:property] withClass:className];
+                [invocation setArgument:&value atIndex:2];
+                [invocation invoke];
+            } else {
+                // TODO: More property types.
+            }
+        }
+    }
+
 }
 
 + (void)removeSublayer:(CALayer *)layer withName:(NSString *)name {

@@ -33,6 +33,7 @@
     [NUIViewRenderer renderBorder:label withClass:className];
     [NUIViewRenderer renderShadow:label withClass:className];
     [self renderText:label withClass:className];
+    [NUIViewRenderer renderExtendedProperties:label withClass:className];
 }
 
 + (void)renderText:(UILabel*)label withClass:(NSString*)className

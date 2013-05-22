@@ -12,6 +12,7 @@
 
 @synthesize autoUpdatePath;
 @synthesize styles;
+@synthesize extendedPropertyPrefix;
 static NUISettings *instance = nil;
 
 + (void)init
@@ -49,6 +50,12 @@ static NUISettings *instance = nil;
 {
     instance = [self getInstance];
     instance.autoUpdatePath = path;
+}
+
++ (void)setExtendedPropertyPrefix:(NSString*)prefix
+{
+    instance = [self getInstance];
+    instance.extendedPropertyPrefix = prefix;
 }
 
 + (BOOL)hasProperty:(NSString*)property withExplicitClass:(NSString*)className
@@ -160,6 +167,32 @@ static NUISettings *instance = nil;
 + (UIControlContentVerticalAlignment)getControlContentVerticalAlignment:(NSString*)property withClass:(NSString*)className
 {
     return [NUIConverter toControlContentVerticalAlignment:[self get:property withClass:className]];
+}
+
++ (NSArray *)extendedPropertiesWithClass:(NSString*)className
+{
+    instance = [self getInstance];
+    NSString *prefix = instance.extendedPropertyPrefix;
+    if (!prefix.length)
+        return nil;
+    
+    NSMutableArray *list = [NSMutableArray new];
+    for (NSString *key in [instance.styles objectForKey:className]) {
+        if (key.length > prefix.length && [[key substringToIndex:prefix.length] isEqualToString:prefix]) {
+            NSString *prop = [key substringFromIndex:prefix.length];
+            [list addObject:prop];
+        }
+    }
+    
+    return list;
+}
+
++ (NSString *)getExtendedPropertyName:(NSString*)property
+{
+    instance = [self getInstance];
+    NSString *prefix = instance.extendedPropertyPrefix;
+    
+    return [NSString stringWithFormat:@"%@%@", prefix, property];
 }
 
 + (NSArray*)getClasses:(NSString*)className

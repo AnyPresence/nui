@@ -60,10 +60,11 @@
     if ([NUISettings hasProperty:@"border-style" withClass:className]) {
         [textField setBorderStyle:[NUISettings getBorderStyle:@"border-style" withClass:className]];
     }
-
+    
     [NUIViewRenderer renderSize:textField withClass:className];
     [NUIViewRenderer renderBorder:textField withClass:className];
     [NUIViewRenderer renderShadow:textField withClass:className];
+    [NUIViewRenderer renderExtendedProperties:textField withClass:className];
 }
 
 @end

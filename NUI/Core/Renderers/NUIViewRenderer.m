@@ -14,7 +14,9 @@
 
 @interface NUIViewRenderer ()
 
-+ (void)removeSublayer:(CALayer *)layer withName:(NSString *)name;
++ (UIImage *)gradientImageWithTopColor:(UIColor *)topColor bottomColor:(UIColor *)bottomColor backgroundColor:(UIColor *)backgroundColor height:(CGFloat)height;
++ (UIImage *)image:(UIImage *)image withSize:(CGSize)size offset:(CGPoint)offset backgroundColor:(UIColor *)backgroundColor;
++ (UIImage *)stretchedImage:(UIImage *)image withSize:(CGSize)size backgroundColor:(UIColor *)backgroundColor;
 
 @end
 
@@ -22,62 +24,49 @@
 
 + (void)render:(UIView*)view withClass:(NSString*)className
 {
+    [self renderBackground:view withClass:className];
+    [self renderSize:view withClass:className];
+    [self renderBorder:view withClass:className];
+    [self renderShadow:view withClass:className];
+}
+
++ (void)renderBackground:(UIView *)view withClass:(NSString *)className
+{
+    UIColor * backgroundColor = nil;
     if ([NUISettings hasProperty:@"background-color" withClass:className]) {
-        [view setBackgroundColor: [NUISettings getColor:@"background-color" withClass: className]];
+        backgroundColor = [NUISettings getColor:@"background-color" withClass: className];
     }
     
     if ([NUISettings hasProperty:@"background-image" withClass:className]) {
-        static NSString * name = @"AP:NUI:bgImageLayer";
+        UIImage * image = [NUISettings getImage:@"background-image" withClass:className];
         
-        CALayer * layer = [CALayer new];
-        layer.frame = view.bounds;
-        layer.name = name;
-        
-        if ([NUISettings hasProperty:@"background-image-tile" withClass:className] &&
-            [NUISettings getBoolean:@"background-image-tile" withClass:className]) {
-            layer.geometryFlipped = YES;
-            layer.transform = CATransform3DMakeScale(1.f, -1.f, 1.f);
-            layer.backgroundColor = [NUISettings getColorFromImage:@"background-image" withClass:className].CGColor;
-        } else {
-            UIImage * image = [NUISettings getImage:@"background-image" withClass:className];
-            layer.contents = (__bridge id)image.CGImage;
-            
-            if (![NUISettings hasProperty:@"background-image-stretch" withClass:className] ||
-                ![NUISettings getBoolean:@"background-image-stretch" withClass:className]) {
+        if (![NUISettings hasProperty:@"background-image-tile" withClass:className] ||
+            ![NUISettings getBoolean:@"background-image-tile" withClass:className]) {
+            if ([NUISettings hasProperty:@"background-image-stretch" withClass:className] &&
+                [NUISettings getBoolean:@"background-image-stretch" withClass:className]) {
+                image = [self stretchedImage:image withSize:view.bounds.size backgroundColor:backgroundColor];
+            } else {
                 CGPoint offset = CGPointZero;
                 if ([NUISettings hasProperty:@"background-image-offset-x" withClass:className])
                     offset.x = [NUISettings getFloat:@"background-image-offset-x" withClass:className] * CGRectGetWidth(view.bounds);
                 if ([NUISettings hasProperty:@"background-image-offset-y" withClass:className])
                     offset.y = [NUISettings getFloat:@"background-image-offset-y" withClass:className] * CGRectGetHeight(view.bounds);;
                 
-                layer.frame = (CGRect){offset, image.size};
+                image = [self image:image withSize:view.bounds.size offset:offset backgroundColor:backgroundColor];
             }
         }
-        
-        if (view.nuiIsApplied) {
-            [self removeSublayer:view.layer withName:name];
-        }
-        [view.layer insertSublayer:layer atIndex:0];
-    }
     
-    if ([NUISettings hasProperty:@"background-color-top" withClass:className]) {
-        static NSString * name = @"AP:NUI:bgGradientLayer";
-        
-        CAGradientLayer *gradientLayer = [NUIGraphics
-                                          gradientLayerWithTop:[NUISettings getColor:@"background-color-top" withClass:className]
-                                          bottom:[NUISettings getColor:@"background-color-bottom" withClass:className]
-                                          frame:view.bounds];
-        gradientLayer.name = name;
-        
-        if (view.nuiIsApplied) {
-            [self removeSublayer:view.layer withName:name];
-        }
-        [view.layer insertSublayer:gradientLayer atIndex:0];
+        [view setBackgroundColor:[UIColor colorWithPatternImage:image]];
+    } else if ([NUISettings hasProperty:@"background-color-top" withClass:className] &&
+               [NUISettings hasProperty:@"background-color-bottom" withClass:className]) {
+        UIImage * image = [self gradientImageWithTopColor:[NUISettings getColor:@"background-color-top" withClass:className]
+                                              bottomColor:[NUISettings getColor:@"background-color-bottom" withClass:className]
+                                          backgroundColor:backgroundColor
+                                                   height:CGRectGetHeight(view.bounds)];
+        [view setBackgroundColor:[UIColor colorWithPatternImage:image]];
+    } else {
+        [view setBackgroundColor:backgroundColor];
     }
-
-    [self renderSize:view withClass:className];
-    [self renderBorder:view withClass:className];
-    [self renderShadow:view withClass:className];
 }
 
 + (void)renderBorder:(UIView*)view withClass:(NSString*)className
@@ -137,7 +126,6 @@
 
 + (void)renderExtendedProperties:(UIView*)view withClass:(NSString*)className
 {
-    // Extended properties
     for (NSString * property in [NUISettings extendedPropertiesWithClass:className]) {
         objc_property_t prop = class_getProperty([view class], [property UTF8String]);
         if (prop) {
@@ -165,19 +153,80 @@
 
 }
 
-+ (void)removeSublayer:(CALayer *)layer withName:(NSString *)name {
-    NSInteger idx = [layer.sublayers indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        if ([[obj name] isEqualToString:name]) {
-            *stop = YES;
-            return YES;
-        } else {
-            return NO;
-        }
-    }];
++ (UIImage *)gradientImageWithTopColor:(UIColor *)topColor bottomColor:(UIColor *)bottomColor backgroundColor:(UIColor *)backgroundColor height:(CGFloat)height
+{
+    CGSize size = CGSizeMake(1.f, height);
+    UIGraphicsBeginImageContextWithOptions(size, NO, [UIScreen mainScreen].scale);
+    CGContextRef ctx = UIGraphicsGetCurrentContext();
     
-    if (idx != NSNotFound) {
-        [[layer.sublayers objectAtIndex:idx] removeFromSuperlayer];
+    if (backgroundColor) {
+        CGContextSetFillColorWithColor(ctx, backgroundColor.CGColor);
+        CGContextFillRect(ctx, (CGRect){ CGPointZero, size });
     }
+    
+    if (topColor && bottomColor) {
+        CFMutableArrayRef colors = CFArrayCreateMutable(NULL, 2, NULL);
+        CFArrayAppendValue(colors, topColor.CGColor);
+        CFArrayAppendValue(colors, bottomColor.CGColor);
+        
+        CGFloat locations[] = { 0.f, 1.f };
+        CGGradientRef gradient = CGGradientCreateWithColors(NULL, colors, locations);
+        
+        CGContextDrawLinearGradient(ctx, gradient, CGPointMake(0.f, 0.f), CGPointMake(0.f, height), NULL);
+        CGGradientRelease(gradient);
+        CFRelease(colors);
+    }
+    
+    UIImage * image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
+
++ (UIImage *)image:(UIImage *)image withSize:(CGSize)size offset:(CGPoint)offset backgroundColor:(UIColor *)backgroundColor
+{
+    UIGraphicsBeginImageContextWithOptions(size, NO, [UIScreen mainScreen].scale);
+    CGContextRef ctx = UIGraphicsGetCurrentContext();
+    
+    if (backgroundColor) {
+        CGContextSetFillColorWithColor(ctx, backgroundColor.CGColor);
+        CGContextFillRect(ctx, (CGRect){ CGPointZero, size });
+    }
+    
+    if (image) {
+        CGContextTranslateCTM(ctx, 0.0, size.height);
+        CGContextScaleCTM(ctx, 1.0, -1.0);
+        offset.y = size.height - image.size.height - offset.y;
+        
+        CGContextDrawImage(ctx, (CGRect){ offset, image.size }, image.CGImage);
+    }
+    
+    UIImage * result = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return result;
+}
+
++ (UIImage *)stretchedImage:(UIImage *)image withSize:(CGSize)size backgroundColor:(UIColor *)backgroundColor
+{
+    UIGraphicsBeginImageContextWithOptions(size, NO, [UIScreen mainScreen].scale);
+    CGContextRef ctx = UIGraphicsGetCurrentContext();
+    
+    if (backgroundColor) {
+        CGContextSetFillColorWithColor(ctx, backgroundColor.CGColor);
+        CGContextFillRect(ctx, (CGRect){ CGPointZero, size });
+    }
+    
+    if (image) {
+        CGContextTranslateCTM(ctx, 0.f, size.height);
+        CGContextScaleCTM(ctx, 1.f, -1.f);
+        CGContextDrawImage(ctx, (CGRect){ CGPointZero, size }, image.CGImage);
+    }
+    
+    UIImage * result = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return result;
 }
 
 @end

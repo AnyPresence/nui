@@ -32,7 +32,7 @@
 
 + (void)renderBackground:(UIView *)view withClass:(NSString *)className
 {
-    UIColor * backgroundColor = nil;
+    UIColor * backgroundColor = view.backgroundColor;
     if ([NUISettings hasProperty:@"background-color" withClass:className]) {
         backgroundColor = [NUISettings getColor:@"background-color" withClass: className];
     }

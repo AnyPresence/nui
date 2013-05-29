@@ -22,13 +22,7 @@
         className = [NSString stringWithFormat:@"%@%@", className, suffix];
     }
     
-    if ([NUISettings hasProperty:@"background-color" withClass:className]) {
-        label.backgroundColor = [NUISettings getColor:@"background-color" withClass:className];
-    } else {
-        // UILabels created programmatically have a white background by default
-        label.backgroundColor = [UIColor clearColor];
-    }
-
+    [NUIViewRenderer renderBackground:label withClass:className];
     [NUIViewRenderer renderSize:label withClass:className];
     [NUIViewRenderer renderBorder:label withClass:className];
     [NUIViewRenderer renderShadow:label withClass:className];

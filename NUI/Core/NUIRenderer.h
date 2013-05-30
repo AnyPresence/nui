@@ -23,6 +23,7 @@
 #import "NUITabBarRenderer.h"
 #import "NUITabBarItemRenderer.h"
 #import "NUITableViewCellRenderer.h"
+#import "NUITextViewRenderer.h"
 #import "NUIToolbarRenderer.h"
 #import "NUITextFieldRenderer.h"
 #import "NUIViewRenderer.h"
@@ -52,6 +53,10 @@
 + (void)renderLabel:(UILabel*)label;
 + (void)renderLabel:(UILabel*)label withClass:(NSString*)className;
 + (void)renderLabel:(UILabel*)label withClass:(NSString*)className withSuffix:(NSString*)suffix;
+
++ (void)renderTextView:(UITextView*)label;
++ (void)renderTextView:(UITextView*)label withClass:(NSString*)className;
++ (void)renderTextView:(UITextView*)label withClass:(NSString*)className withSuffix:(NSString*)suffix;
 
 + (void)renderNavigationBar:(UINavigationBar*)bar;
 + (void)renderNavigationBar:(UINavigationBar*)bar withClass:(NSString*)className;

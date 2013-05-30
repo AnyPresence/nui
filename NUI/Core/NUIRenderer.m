@@ -74,6 +74,24 @@ static NUIRenderer *instance = nil;
     [self registerObject:label];
 }
 
++ (void)renderTextView:(UITextView *)label
+{
+    [NUITextViewRenderer render:label withClass:@"Label"];
+    [self registerObject:label];
+}
+
++ (void)renderTextView:(UITextView*)label withClass:(NSString*)className
+{
+    [NUITextViewRenderer render:label withClass:className];
+    [self registerObject:label];
+}
+
++ (void)renderTextView:(UITextView*)label withClass:(NSString*)className withSuffix:(NSString*)suffix
+{
+    [NUITextViewRenderer render:label withClass:className withSuffix:suffix];
+    [self registerObject:label];
+}
+
 
 
 + (void)renderNavigationBar:(UINavigationBar*)bar

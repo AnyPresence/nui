@@ -6,6 +6,7 @@
 //
 //
 
+#import "NUIObserver.h"
 #import "UITextView+NUI.h"
 
 @implementation UITextView (NUI)
@@ -36,6 +37,13 @@
     if (!self.nuiIsApplied) {
         [self applyNUI];
     }
+    
+    if (self.window) {
+        [NUIObserver addObserverTo:self forKeyPath:@"frame" selector:@selector(applyNUI)];
+    } else {
+        [NUIObserver removeObserverFrom:self forKeyPath:@"frame" selector:@selector(applyNUI)];
+    }
+    
     [self override_didMoveToWindow];
 }
 

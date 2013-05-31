@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Tom Benner. All rights reserved.
 //
 
+#import "NUIObserver.h"
 #import "UIProgressView+NUI.h"
 
 @implementation UIProgressView (NUI)
@@ -34,6 +35,13 @@
     if (!self.nuiIsApplied) {
         [self applyNUI];
     }
+    
+    if (self.window) {
+        [NUIObserver addObserverTo:self forKeyPath:@"frame" selector:@selector(applyNUI)];
+    } else {
+        [NUIObserver removeObserverFrom:self forKeyPath:@"frame" selector:@selector(applyNUI)];
+    }
+    
     [self override_didMoveToWindow];
 }
 

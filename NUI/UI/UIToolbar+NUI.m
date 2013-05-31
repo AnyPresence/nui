@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Simon Moser. All rights reserved.
 //
 
+#import "NUIObserver.h"
 #import "UIToolbar+NUI.h"
 
 @implementation UIToolbar (NUI)
@@ -35,6 +36,13 @@
     if (!self.nuiIsApplied) {
         [self applyNUI];
     }
+    
+    if (self.window) {
+        [NUIObserver addObserverTo:self forKeyPath:@"frame" selector:@selector(applyNUI)];
+    } else {
+        [NUIObserver removeObserverFrom:self forKeyPath:@"frame" selector:@selector(applyNUI)];
+    }
+    
     [self override_didMoveToWindow];
 }
 

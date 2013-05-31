@@ -28,47 +28,8 @@
         [button setTitleEdgeInsets:[NUISettings getEdgeInsets:@"padding" withClass:className]];
     }
     
-    // Set background color
-    if ([NUISettings hasProperty:@"background-color" withClass:className]) {
-        [button setBackgroundImage:[NUISettings getImageFromColor:@"background-color" withClass:className] forState:UIControlStateNormal];
-    }
-    if ([NUISettings hasProperty:@"background-color-selected" withClass:className]) {
-        [button setBackgroundImage:[NUISettings getImageFromColor:@"background-color-selected" withClass:className] forState:UIControlStateSelected];
-    }
-    if ([NUISettings hasProperty:@"background-color-highlighted" withClass:className]) {
-        [button setBackgroundImage:[NUISettings getImageFromColor:@"background-color-highlighted" withClass:className] forState:UIControlStateHighlighted];
-    }
-    if ([NUISettings hasProperty:@"background-color-disabled" withClass:className]) {
-        [button setBackgroundImage:[NUISettings getImageFromColor:@"background-color-disabled" withClass:className] forState:UIControlStateDisabled];
-    }
-    
-    // Set background gradient
-    if ([NUISettings hasProperty:@"background-color-top" withClass:className]) {
-        CAGradientLayer *gradientLayer = [NUIGraphics
-                                          gradientLayerWithTop:[NUISettings getColor:@"background-color-top" withClass:className]
-                                          bottom:[NUISettings getColor:@"background-color-bottom" withClass:className]
-                                          frame:button.bounds];
-        int backgroundLayerIndex = [button.layer.sublayers count] == 1 ? 0 : 1;
-        if (button.nuiIsApplied) {
-            [[button.layer.sublayers objectAtIndex:backgroundLayerIndex] removeFromSuperlayer];
-        }
-        [button.layer insertSublayer:gradientLayer atIndex:backgroundLayerIndex];
-    }
-    
-    // Set background image
-    if ([NUISettings hasProperty:@"background-image" withClass:className]) {
-        [button setBackgroundImage:[NUISettings getImage:@"background-image" withClass:className] forState:UIControlStateNormal];
-    }
-    if ([NUISettings hasProperty:@"background-image-selected" withClass:className]) {
-        [button setBackgroundImage:[NUISettings getImage:@"background-image-selected" withClass:className] forState:UIControlStateSelected];
-    }
-    if ([NUISettings hasProperty:@"background-image-highlighted" withClass:className]) {
-        [button setBackgroundImage:[NUISettings getImage:@"background-image-highlighted" withClass:className] forState:UIControlStateHighlighted];
-    }
-    if ([NUISettings hasProperty:@"background-image-disabled" withClass:className]) {
-        [button setBackgroundImage:[NUISettings getImage:@"background-image-disabled" withClass:className] forState:UIControlStateDisabled];
-    }
-    
+    // Background and text
+    [NUIViewRenderer renderBackground:button withClass:className];
     [NUILabelRenderer renderText:button.titleLabel withClass:className];
     
     // Set text align

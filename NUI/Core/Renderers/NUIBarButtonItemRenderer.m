@@ -12,31 +12,31 @@
 
 + (void)render:(UIBarButtonItem*)item withClass:(NSString*)className
 {
-    
-    if ([NUISettings hasProperty:@"background-image" withClass:className]) {
-        [item setBackgroundImage:[NUISettings getImage:@"background-image" withClass:className] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-    } else if ([NUISettings hasProperty:@"background-tint-color" withClass:className]) {
+    if ([NUISettings hasProperty:@"background-tint-color" withClass:className]) {
         [item setTintColor:[NUISettings getColor:@"background-tint-color" withClass:className]];
     } else if ([NUISettings hasProperty:@"background-color" withClass:className] ||
-               [NUISettings hasProperty:@"background-color-top" withClass:className]) {
+               [NUISettings hasProperty:@"background-image" withClass:className] ||
+               [NUISettings hasProperty:@"background-image-tile" withClass:className] ||
+               [NUISettings hasProperty:@"background-image-stretch" withClass:className] ||
+               [NUISettings hasProperty:@"background-image-offset-x" withClass:className] ||
+               [NUISettings hasProperty:@"background-image-offset-y" withClass:className] ||
+               [NUISettings hasProperty:@"background-color-top" withClass:className] ||
+               [NUISettings hasProperty:@"background-color-bottom" withClass:className] ||
+               [NUISettings hasProperty:@"border-color" withClass:className] ||
+               [NUISettings hasProperty:@"border-width" withClass:className] ||
+               [NUISettings hasProperty:@"corner-radius" withClass:className]) {
         CALayer *layer = [CALayer layer];
         [layer setFrame:CGRectMake(0, 0, 30, 26)];
         [layer setMasksToBounds:YES];
         
-        if ([NUISettings hasProperty:@"background-color-top" withClass:className]) {
-            CAGradientLayer *gradientLayer = [NUIGraphics
-                                              gradientLayerWithTop:[NUISettings getColor:@"background-color-top" withClass:className]
-                                              bottom:[NUISettings getColor:@"background-color-bottom" withClass:className]
-                                              frame:layer.frame];
-            int backgroundLayerIndex = 0;
-            if (item.nuiIsApplied) {
-                [[layer.sublayers objectAtIndex:backgroundLayerIndex] removeFromSuperlayer];
-            }
-            [layer insertSublayer:gradientLayer atIndex:backgroundLayerIndex];
+        UIColor * backgroundColor = [UIColor clearColor];
+        if ([NUISettings hasProperty:@"background-color" withClass:className]) {
+            backgroundColor = [NUISettings getColor:@"background-color" withClass: className];
         }
         
-        if ([NUISettings hasProperty:@"background-color" withClass:className]) {
-            [layer setBackgroundColor:[[NUISettings getColor:@"background-color" withClass:className] CGColor]];
+        UIImage * patternImage = [NUIViewRenderer backgroundPatternImage:backgroundColor withClass:className size:layer.bounds.size];
+        if (patternImage) {
+            layer.backgroundColor = [UIColor colorWithPatternImage:patternImage].CGColor;
         }
         
         if ([NUISettings hasProperty:@"border-color" withClass:className]) {

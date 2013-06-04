@@ -28,6 +28,7 @@
 #import "NUITextFieldRenderer.h"
 #import "NUIViewRenderer.h"
 #import "NUIWindowRenderer.h"
+#import "NUIWebViewRenderer.h"
 #import "UIView+NUI.h"
 
 @interface NUIRenderer : NSObject {
@@ -93,6 +94,10 @@
 
 + (void)renderTextField:(UITextField*)textField;
 + (void)renderTextField:(UITextField*)textField withClass:(NSString*)className;
+
++ (void)renderWebView:(UIWebView*)view;
++ (void)renderWebView:(UIWebView*)view withClass:(NSString*)className;
++ (void)renderWebViewCSS:(UIWebView*)view withClass:(NSString*)className;
 
 + (void)renderView:(UIView*)view;
 + (void)renderView:(UIView*)view withClass:(NSString*)className;

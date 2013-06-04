@@ -256,6 +256,24 @@ static NUIRenderer *instance = nil;
 }
 
 
++ (void)renderWebView:(UIWebView*)view
+{
+    [NUIWebViewRenderer render:view withClass:@"WebView"];
+    [self registerObject:view];
+}
+
++ (void)renderWebView:(UIWebView*)view withClass:(NSString*)className
+{
+    [NUIWebViewRenderer render:view withClass:className];
+    [self registerObject:view];
+}
+
++ (void)renderWebViewCSS:(UIWebView*)view withClass:(NSString*)className
+{
+    [NUIWebViewRenderer renderCSS:view withClass:className];
+    [self registerObject:view];
+}
+
 
 + (void)renderView:(UIView*)view
 {
@@ -338,6 +356,7 @@ static NUIRenderer *instance = nil;
                                    [UITextField class], @"renderTextField",
                                    [UIButton class], @"renderButton",
                                    [UILabel class], @"renderLabel",
+                                   [UIWebView class], @"renderWebView",
                                    [UIView class], @"renderView",
                                    nil];
     for (NSString *renderMethod in renderedClasses) {

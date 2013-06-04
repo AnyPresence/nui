@@ -39,35 +39,31 @@
 {
     NSString *className = cell.nuiClass;
     
-    // Set background color
+    // Background
+    UIColor * backgroundColor = cell.backgroundView.backgroundColor;
     if ([NUISettings hasProperty:@"background-color" withClass:className]) {
-        UIImage *colorImage = [NUISettings getImageFromColor:@"background-color" withClass:className];
-        cell.backgroundView = [[UIImageView alloc] initWithImage:colorImage];
+        backgroundColor = [NUISettings getColor:@"background-color" withClass:className];
     }
     
-    // Set background gradient
-    if ([NUISettings hasProperty:@"background-color-top" withClass:className]) {
-        UIImage *gradientImage = [NUIGraphics
-                                  gradientImageWithTop:[NUISettings getColor:@"background-color-top" withClass:className]
-                                  bottom:[NUISettings getColor:@"background-color-bottom" withClass:className]
-                                  frame:cell.bounds];
-        cell.backgroundView = [[UIImageView alloc] initWithImage:gradientImage];
+    UIImage * patternImage = [NUIViewRenderer backgroundPatternImage:backgroundColor
+                                                           withClass:className
+                                                                size:cell.bounds.size];
+    cell.backgroundView = [[UIView alloc] initWithFrame:cell.bounds];
+    cell.backgroundView.backgroundColor = patternImage ? [UIColor colorWithPatternImage:patternImage] : backgroundColor;
+    
+    // Border
+    if ([NUISettings hasProperty:@"border-color" withClass:className]) {
+        [cell.backgroundView.layer setBorderColor:[[NUISettings getColor:@"border-color" withClass:className] CGColor]];
     }
     
-    // Set selected background color
-    if ([NUISettings hasProperty:@"background-color-selected" withClass:className]) {
-        UIImage *colorImage = [NUISettings getImageFromColor:@"background-color-selected" withClass:className];
-        cell.selectedBackgroundView = [[UIImageView alloc] initWithImage:colorImage];
+    if ([NUISettings hasProperty:@"border-width" withClass:className]) {
+        [cell.backgroundView.layer setBorderWidth:[NUISettings getFloat:@"border-width" withClass:className]];
     }
     
-    // Set selected background gradient
-    if ([NUISettings hasProperty:@"background-color-top-selected" withClass:className]) {
-        UIImage *gradientImage = [NUIGraphics
-                                  gradientImageWithTop:[NUISettings getColor:@"background-color-top-selected" withClass:className]
-                                  bottom:[NUISettings getColor:@"background-color-bottom-selected" withClass:className]
-                                  frame:cell.bounds];
-        cell.selectedBackgroundView = [[UIImageView alloc] initWithImage:gradientImage];
+    if ([NUISettings hasProperty:@"corner-radius" withClass:className]) {
+        [cell.backgroundView.layer setCornerRadius:[NUISettings getFloat:@"corner-radius" withClass:className]];
     }
+
 }
 
 @end

@@ -32,6 +32,7 @@
         UIColor * backgroundColor = [UIColor clearColor];
         if ([NUISettings hasProperty:@"background-color" withClass:className]) {
             backgroundColor = [NUISettings getColor:@"background-color" withClass: className];
+            layer.backgroundColor = backgroundColor.CGColor;
         }
         
         UIImage * patternImage = [NUIViewRenderer backgroundPatternImage:backgroundColor withClass:className size:layer.bounds.size];

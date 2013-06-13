@@ -101,7 +101,7 @@
     if ([NUISettings hasProperty:@"width" withClass:className]) {
         width = [NUISettings getFloat:@"width" withClass:className];
     }
-
+    
     if (height != view.frame.size.height || width != view.frame.size.width) {
         view.frame = CGRectMake(view.frame.origin.x, view.frame.origin.y, width, height);
     }
@@ -133,24 +133,42 @@
             }
         }
     }
+    
+}
 
++ (NSArray *)backgroundPatternImageProperties
+{
+    return @[ @"background-image",
+              @"background-image-tile",
+              @"background-image-stretch",
+              @"background-image-offset-x",
+              @"background-image-offset-y",
+              @"background-color-top",
+              @"background-color-bottom" ];
 }
 
 + (UIImage *)backgroundPatternImage:(UIColor *)defaultColor withClass:(NSString *)className size:(CGSize)size
 {
-    if ([NUISettings hasProperty:@"background-image" withClass:className]) {
+    return [self backgroundPatternImage:defaultColor withClass:className size:size properties:[self backgroundPatternImageProperties]];
+}
+
++ (UIImage *)backgroundPatternImage:(UIColor *)defaultColor withClass:(NSString *)className size:(CGSize)size properties:(NSArray *)properties
+{
+#define HAS_PROPERTY(p) ([properties containsObject:p] && [NUISettings hasProperty:p withClass:className])
+    
+    if (HAS_PROPERTY(@"background-image")) {
         UIImage * patternImage = [NUISettings getImage:@"background-image" withClass:className];
         
-        if (![NUISettings hasProperty:@"background-image-tile" withClass:className] ||
+        if (!HAS_PROPERTY(@"background-image-tile") ||
             ![NUISettings getBoolean:@"background-image-tile" withClass:className]) {
-            if ([NUISettings hasProperty:@"background-image-stretch" withClass:className] &&
+            if (HAS_PROPERTY(@"background-image-stretch") &&
                 [NUISettings getBoolean:@"background-image-stretch" withClass:className]) {
                 patternImage = [self stretchedImage:patternImage withSize:size backgroundColor:defaultColor];
             } else {
                 CGPoint offset = CGPointZero;
-                if ([NUISettings hasProperty:@"background-image-offset-x" withClass:className])
+                if (HAS_PROPERTY(@"background-image-offset-x"))
                     offset.x = [NUISettings getFloat:@"background-image-offset-x" withClass:className] * size.width;
-                if ([NUISettings hasProperty:@"background-image-offset-y" withClass:className])
+                if (HAS_PROPERTY(@"background-image-offset-y"))
                     offset.y = [NUISettings getFloat:@"background-image-offset-y" withClass:className] * size.height;
                 
                 patternImage = [self image:patternImage withSize:size offset:offset backgroundColor:defaultColor];
@@ -158,7 +176,7 @@
         }
         
         return patternImage;
-    } else if ([NUISettings hasProperty:@"background-color-top" withClass:className] &&
+    } else if (HAS_PROPERTY(@"background-color-top") &&
                [NUISettings hasProperty:@"background-color-bottom" withClass:className]) {
         return [self gradientImageWithTopColor:[NUISettings getColor:@"background-color-top" withClass:className]
                                    bottomColor:[NUISettings getColor:@"background-color-bottom" withClass:className]
@@ -258,7 +276,7 @@
         
         image = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
-    
+        
         return image;
     }
 }

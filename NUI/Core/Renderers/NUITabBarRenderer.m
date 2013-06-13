@@ -11,15 +11,7 @@
 @implementation NUITabBarRenderer
 
 + (void)render:(UITabBar*)bar withClass:(NSString*)className
-{
-    if ([NUISettings hasProperty:@"background-image" withClass:className]) {
-        [bar setBackgroundImage:[NUISettings getImage:@"background-image" withClass:className]];
-    }
-    
-    if ([NUISettings hasProperty:@"background-tint-color" withClass:className]) {
-        [bar setTintColor:[NUISettings getColor:@"background-tint-color" withClass:className]];
-    }
-    
+{    
     if ([NUISettings hasProperty:@"selected-image" withClass:className]) {
         [bar setSelectionIndicatorImage:[NUISettings getImage:@"selected-image" withClass:className]];
     }
@@ -49,19 +41,77 @@
 
 + (void)renderSizeDependentProperties:(UITabBar*)bar
 {
-    NSString *className = bar.nuiClass;
-    
-    if ([NUISettings hasProperty:@"background-color-top" withClass:className]) {
-        CGRect frame = bar.bounds;
-        UIImage *gradientImage = [NUIGraphics
-                                  gradientImageWithTop:[NUISettings getColor:@"background-color-top" withClass:className]
-                                  bottom:[NUISettings getColor:@"background-color-bottom" withClass:className]
-                                  frame:frame];
-        [bar setBackgroundImage:gradientImage];
-    } else if ([NUISettings hasProperty:@"background-color" withClass:className]) {
-        CGRect frame = bar.bounds;
-        UIImage *colorImage = [NUIGraphics colorImage:[NUISettings getColor:@"background-color" withClass:className] withFrame:frame];
-        [bar setBackgroundImage:colorImage];
+    NSString * className = bar.nuiClass;
+    if (bar.nuiClass) {
+        UIColor * backgroundColor = bar.backgroundColor;
+        if ([NUISettings hasProperty:@"background-color" withClass:className]) {
+            backgroundColor = [NUISettings getColor:@"background-color" withClass:className];
+            
+            bar.tintColor = backgroundColor;
+        }
+        
+        UIImage * patternImage = [NUIViewRenderer backgroundPatternImage:backgroundColor withClass:className size:bar.bounds.size];
+        bar.backgroundImage = patternImage;
+        
+        NSString * activeClassName = [NSString stringWithFormat:@"%@Active", className];
+        if ([NUISettings hasProperty:@"background-tint-color" withClass:activeClassName]) {
+            [bar setTintColor:[NUISettings getColor:@"background-tint-color" withClass:activeClassName]];
+        } else {
+            NSMutableArray * properties = [[NUIViewRenderer backgroundPatternImageProperties] mutableCopy];
+            [properties removeObject:@"background-image"];
+            [properties removeObject:@"background-image-stretch"];
+            [properties removeObject:@"background-image-tile"];
+            [properties removeObject:@"background-image-offset-x"];
+            [properties removeObject:@"background-image-offset-y"];
+            [properties addObject:@"background-color"];
+            
+            for (NSString * property in properties) {
+                if ([NUISettings hasProperty:property withClass:activeClassName]) {
+                    float borderWidth = [NUISettings getFloat:@"border-width" withClass:activeClassName];
+                    float cornerRadius = [NUISettings getFloat:@"corner-radius" withClass:activeClassName];
+                    
+                    CALayer * layer = [CALayer new];
+                    layer.frame = CGRectMake(0.f, 0.f, cornerRadius * 2.f + borderWidth * 2.f + 1.f, CGRectGetHeight(bar.bounds));
+                    layer.masksToBounds = YES;
+                    
+                    UIColor * backgroundColor = [UIColor clearColor];
+                    if ([NUISettings hasProperty:@"background-color" withClass:activeClassName]) {
+                        backgroundColor = [NUISettings getColor:@"background-color" withClass:activeClassName];
+                        
+                        layer.backgroundColor = backgroundColor.CGColor;
+                    }
+                    
+                    UIImage * patternImage = [NUIViewRenderer backgroundPatternImage:backgroundColor withClass:activeClassName size:bar.bounds.size properties:properties];
+                    if (patternImage) {
+                        layer.backgroundColor = [UIColor colorWithPatternImage:patternImage].CGColor;
+                    }
+                    
+                    if ([NUISettings hasProperty:@"border-color" withClass:activeClassName]) {
+                        layer.borderColor = [[NUISettings getColor:@"border-color" withClass:activeClassName] CGColor];
+                    }
+                    
+                    if ([NUISettings hasProperty:@"border-width" withClass:activeClassName]) {
+                        layer.borderWidth = borderWidth;
+                    }
+
+                    if ([NUISettings hasProperty:@"corner-radius" withClass:activeClassName]) {
+                        layer.cornerRadius = cornerRadius;
+                    }
+
+                    UIEdgeInsets insets = UIEdgeInsetsMake(0.f, CGRectGetWidth(layer.bounds) / 2.f, 0.f, CGRectGetWidth(layer.bounds) / 2.f);
+                    UIImage *image = [NUIGraphics caLayerToUIImage:layer];
+                    if ([image respondsToSelector:@selector(resizableImageWithCapInsets:resizingMode:)]) {
+                        image = [image resizableImageWithCapInsets:insets resizingMode:UIImageResizingModeStretch];
+                    } else {
+                        image = [image resizableImageWithCapInsets:insets];
+                    }
+
+                    bar.selectionIndicatorImage = image;
+                    
+                    break;
+                }
+            }
+        }
     }
 }
 

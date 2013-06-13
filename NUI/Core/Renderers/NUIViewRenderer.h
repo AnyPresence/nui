@@ -18,6 +18,8 @@
 + (void)renderShadow:(UIView*)view withClass:(NSString*)className;
 + (void)renderSize:(UIView*)view withClass:(NSString*)className;
 + (void)renderExtendedProperties:(UIView*)view withClass:(NSString*)className;
++ (NSArray *)backgroundPatternImageProperties;
 + (UIImage *)backgroundPatternImage:(UIColor *)defaultColor withClass:(NSString *)className size:(CGSize)size;
++ (UIImage *)backgroundPatternImage:(UIColor *)defaultColor withClass:(NSString *)className size:(CGSize)size properties:(NSArray *)properties;
 
 @end

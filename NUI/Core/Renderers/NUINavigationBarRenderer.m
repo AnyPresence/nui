@@ -16,9 +16,6 @@
         [bar setTintColor:[NUISettings getColor:@"background-tint-color" withClass:className]];
     }
     
-    if ([NUISettings hasProperty:@"background-image" withClass:className]) {
-        [bar setBackgroundImage:[NUISettings getImage:@"background-image" withClass:className] forBarMetrics:UIBarMetricsDefault];
-    }
     if ([NUISettings hasProperty:@"shadow-image" withClass:className]) {
         [bar setShadowImage:[NUISettings getImage:@"shadow-image" withClass:className]];
     }
@@ -41,17 +38,17 @@
 {
     NSString *className = bar.nuiClass;
     
-    if ([NUISettings hasProperty:@"background-color-top" withClass:className]) {
-        CGRect frame = bar.bounds;
-        UIImage *gradientImage = [NUIGraphics
-                                  gradientImageWithTop:[NUISettings getColor:@"background-color-top" withClass:className]
-                                  bottom:[NUISettings getColor:@"background-color-bottom" withClass:className]
-                                  frame:frame];
-        [bar setBackgroundImage:gradientImage forBarMetrics:UIBarMetricsDefault];
-    } else if ([NUISettings hasProperty:@"background-color" withClass:className]) {
-        CGRect frame = bar.bounds;
-        UIImage *colorImage = [NUIGraphics colorImage:[NUISettings getColor:@"background-color" withClass:className] withFrame:frame];
-        [bar setBackgroundImage:colorImage forBarMetrics:UIBarMetricsDefault];
+    UIColor * backgroundColor = bar.backgroundColor;
+    if ([NUISettings hasProperty:@"background-color" withClass:className]) {
+        backgroundColor = [NUISettings getColor:@"background-color" withClass:className];
+        
+        bar.backgroundColor = backgroundColor;
+        bar.tintColor = [UIColor clearColor];
+    }
+    
+    UIImage * patternImage = [NUIViewRenderer backgroundPatternImage:backgroundColor withClass:className size:bar.bounds.size];
+    if (patternImage) {
+        [bar setBackgroundImage:patternImage forBarMetrics:UIBarMetricsDefault];
     }
 }
 

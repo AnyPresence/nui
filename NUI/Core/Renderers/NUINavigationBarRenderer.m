@@ -20,6 +20,7 @@
         [bar setShadowImage:[NUISettings getImage:@"shadow-image" withClass:className]];
     }
     
+    [NUIViewRenderer renderBorder:bar withClass:className];
     [self renderSizeDependentProperties:bar];
     
     NSDictionary *titleTextAttributes = [NUIUtilities titleTextAttributesForClass:className];

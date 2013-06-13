@@ -20,6 +20,7 @@
         [bar setSelectedImageTintColor:[NUISettings getColor:@"selected-image-tint-color" withClass:className]];
     }
     
+    [NUIViewRenderer renderBorder:bar withClass:className];
     [self renderSizeDependentProperties:bar];
     
     // Apply UITabBarItem's background-image-selected property to bar.selectionIndicatorImage

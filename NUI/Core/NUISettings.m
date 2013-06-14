@@ -108,6 +108,17 @@ static NUISettings *instance = nil;
     return [NUIConverter toFloat:[self get:property withClass:className]];
 }
 
++ (float)getFloat:(NSString*)property withClass:(NSString*)className relativeTo:(float)size
+{
+    NSString * value = [self get:property withClass:className];
+    if (value.length > 0 && [[value substringFromIndex:value.length - 1] isEqualToString:@"%"]) {
+        value = [value substringToIndex:value.length - 1];
+        return [NUIConverter toFloat:value] / 100.f * size;
+    } else {
+        return [NUIConverter toFloat:value];
+    }
+}
+
 + (CGSize)getSize:(NSString*)property withClass:(NSString*)className
 {   
     return [NUIConverter toSize:[self get:property withClass:className]];

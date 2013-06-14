@@ -94,12 +94,12 @@
 {
     CGFloat height = view.frame.size.height;
     if ([NUISettings hasProperty:@"height" withClass:className]) {
-        height = [NUISettings getFloat:@"height" withClass:className];
+        height = [NUISettings getFloat:@"height" withClass:className relativeTo:CGRectGetHeight([UIScreen mainScreen].applicationFrame)];
     }
     
     CGFloat width = view.frame.size.width;
     if ([NUISettings hasProperty:@"width" withClass:className]) {
-        width = [NUISettings getFloat:@"width" withClass:className];
+        width = [NUISettings getFloat:@"width" withClass:className relativeTo:CGRectGetWidth([UIScreen mainScreen].applicationFrame)];
     }
     
     if (height != view.frame.size.height || width != view.frame.size.width) {

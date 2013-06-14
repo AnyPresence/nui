@@ -12,6 +12,11 @@
 
 + (void)render:(UIBarButtonItem*)item withClass:(NSString*)className
 {
+    if ([NUISettings hasProperty:@"width" withClass:className]) {
+        CGFloat width = [NUISettings getFloat:@"width" withClass:className relativeTo:CGRectGetWidth([UIScreen mainScreen].applicationFrame)];
+        item.width = width;
+    }
+    
     if ([NUISettings hasProperty:@"background-tint-color" withClass:className]) {
         [item setTintColor:[NUISettings getColor:@"background-tint-color" withClass:className]];
     } else if ([NUISettings hasProperty:@"background-color" withClass:className] ||

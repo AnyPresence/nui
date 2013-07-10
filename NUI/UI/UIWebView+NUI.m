@@ -50,10 +50,10 @@
     });
     
     if (self.window) {
-        dispatch_resume(timer);
+        //dispatch_resume(timer);
         [NUIObserver addObserverTo:self forKeyPath:@"frame" selector:@selector(applyNUI)];
     } else {
-        dispatch_suspend(timer);
+        //dispatch_suspend(timer);
         [NUIObserver removeObserverFrom:self forKeyPath:@"frame" selector:@selector(applyNUI)];
     }
     

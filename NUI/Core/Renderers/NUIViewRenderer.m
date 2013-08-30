@@ -154,6 +154,9 @@
 
 + (UIImage *)backgroundPatternImage:(UIColor *)defaultColor withClass:(NSString *)className size:(CGSize)size properties:(NSArray *)properties
 {
+    if (size.width <= 0.f || size.height <= 0.f)
+        return nil;
+    
 #define HAS_PROPERTY(p) ([properties containsObject:p] && [NUISettings hasProperty:p withClass:className])
     
     if (HAS_PROPERTY(@"background-image")) {

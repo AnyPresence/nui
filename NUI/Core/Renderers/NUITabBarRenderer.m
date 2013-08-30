@@ -56,7 +56,11 @@
         
         NSString * activeClassName = [NSString stringWithFormat:@"%@Active", className];
         if ([NUISettings hasProperty:@"background-tint-color" withClass:activeClassName]) {
-            [bar setTintColor:[NUISettings getColor:@"background-tint-color" withClass:activeClassName]];
+            if ([bar respondsToSelector:@selector(setBarTintColor:)]) {
+                [bar setBarTintColor:[NUISettings getColor:@"background-tint-color" withClass:activeClassName]];
+            } else {
+                [bar setTintColor:[NUISettings getColor:@"background-tint-color" withClass:activeClassName]];
+            }
         } else {
             NSMutableArray * properties = [[NUIViewRenderer backgroundPatternImageProperties] mutableCopy];
             [properties removeObject:@"background-image"];

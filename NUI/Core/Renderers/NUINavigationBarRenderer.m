@@ -13,7 +13,11 @@
 + (void)render:(UINavigationBar*)bar withClass:(NSString*)className
 {
     if ([NUISettings hasProperty:@"background-tint-color" withClass:className]) {
-        [bar setTintColor:[NUISettings getColor:@"background-tint-color" withClass:className]];
+        if ([bar respondsToSelector:@selector(setBarTintColor:)]) {
+            [bar setBarTintColor:[NUISettings getColor:@"background-tint-color" withClass:className]];
+        } else {
+            [bar setTintColor:[NUISettings getColor:@"background-tint-color" withClass:className]];
+        }
     }
     
     if ([NUISettings hasProperty:@"shadow-image" withClass:className]) {
@@ -44,9 +48,14 @@
         backgroundColor = [NUISettings getColor:@"background-color" withClass:className];
         
         bar.backgroundColor = backgroundColor;
-        bar.tintColor = [UIColor clearColor];
+        
+        if ([bar respondsToSelector:@selector(setBarTintColor:)]) {
+            bar.barTintColor = [UIColor clearColor];
+        } else {
+            bar.tintColor = [UIColor clearColor];
+        }
     }
-    
+
     UIImage * patternImage = [NUIViewRenderer backgroundPatternImage:backgroundColor withClass:className size:bar.bounds.size];
     if (patternImage) {
         [bar setBackgroundImage:patternImage forBarMetrics:UIBarMetricsDefault];

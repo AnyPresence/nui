@@ -19,7 +19,11 @@
     }
     
     if ([NUISettings hasProperty:@"background-tint-color" withClass:className]) {
-        [bar setTintColor:[NUISettings getColor:@"background-tint-color" withClass:className]];
+        if ([bar respondsToSelector:@selector(setBarTintColor:)]) {
+            [bar setBarTintColor:[NUISettings getColor:@"background-tint-color" withClass:className]];
+        } else {
+            [bar setTintColor:[NUISettings getColor:@"background-tint-color" withClass:className]];
+        }
     }
     
     if ([NUISettings hasProperty:@"background-image" withClass:className]) {

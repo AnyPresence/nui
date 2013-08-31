@@ -38,22 +38,20 @@
         [self applyNUI];
     }
     
-    static dispatch_source_t timer;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
-        
-        dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), 1.f * NSEC_PER_SEC, .5f * NSEC_PER_SEC);
-        dispatch_source_set_event_handler(timer, ^{
+    if (!self.timer) {
+        self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
+
+        dispatch_source_set_timer(self.timer, dispatch_walltime(NULL, 0), 1.f * NSEC_PER_SEC, .5f * NSEC_PER_SEC);
+        dispatch_source_set_event_handler(self.timer, ^{
             [NUIRenderer renderWebViewCSS:self withClass:self.nuiClass];
         });
-    });
+    }
     
     if (self.window) {
-        //dispatch_resume(timer);
+        dispatch_resume(self.timer);
         [NUIObserver addObserverTo:self forKeyPath:@"frame" selector:@selector(applyNUI)];
     } else {
-        //dispatch_suspend(timer);
+        dispatch_suspend(self.timer);
         [NUIObserver removeObserverFrom:self forKeyPath:@"frame" selector:@selector(applyNUI)];
     }
     
@@ -74,6 +72,14 @@
 
 - (NSNumber*)nuiIsApplied {
     return objc_getAssociatedObject(self, "nuiIsApplied");
+}
+
+- (void)setTimer:(dispatch_source_t)timer {
+    objc_setAssociatedObject(self, "timer", timer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (dispatch_source_t)timer {
+    return objc_getAssociatedObject(self, "timer");
 }
 
 @end

@@ -25,6 +25,7 @@
     [self swizzleDidMoveToWindow:[UISwitch class]];
     [self swizzleDidMoveToWindow:[UITabBar class]];
     [self swizzleDidMoveToWindow:[UITableViewCell class]];
+    [self swizzleDidMoveToWindow:[UICollectionViewCell class]];
     [self swizzleDidMoveToWindow:[UITextField class]];
     [self swizzleDidMoveToWindow:[UIToolbar class]];
     [self swizzleDidMoveToWindow:[UIControl class]];

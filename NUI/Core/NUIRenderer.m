@@ -230,6 +230,19 @@ static NUIRenderer *instance = nil;
 }
 
 
++ (void)renderCollectionViewCell:(UICollectionViewCell *)cell
+{
+    [NUICollectionViewCellRenderer render:cell withClass:@"CollectionCell"];
+    [self registerObject:cell];
+}
+
++ (void)renderCollectionViewCell:(UICollectionViewCell *)cell withClass:(NSString *)className
+{
+    [NUICollectionViewCellRenderer render:cell withClass:className];
+    [self registerObject:cell];
+}
+
+
 + (void)renderToolbar:(UIToolbar*)bar
 {
     [NUIToolbarRenderer render:bar withClass:@"Toolbar"];
@@ -318,6 +331,11 @@ static NUIRenderer *instance = nil;
     [NUITableViewCellRenderer sizeDidChange:cell];
 }
 
++ (void)sizeDidChangeForCollectionViewCell:(UITableViewCell *)cell
+{
+    [NUICollectionViewCellRenderer sizeDidChange:cell];
+}
+
 
 + (void)addOrientationDidChangeObserver:(id)observer
 {
@@ -352,6 +370,7 @@ static NUIRenderer *instance = nil;
                                    [UITabBar class], @"renderTabBar",
                                    [UITabBarItem class], @"renderTabBarItem",
                                    [UITableViewCell class], @"renderTableViewCell",
+                                   [UICollectionViewCell class], @"renderCollectionViewCell",
                                    [UIToolbar class], @"renderToolbar",
                                    [UITextField class], @"renderTextField",
                                    [UIButton class], @"renderButton",

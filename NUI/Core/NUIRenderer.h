@@ -11,6 +11,7 @@
 #import "NUISettings.h"
 #import "NUIBarButtonItemRenderer.h"
 #import "NUIButtonRenderer.h"
+#import "NUICollectionViewCellRenderer.h"
 #import "NUIControlRenderer.h"
 #import "NUILabelRenderer.h"
 #import "NUINavigationBarRenderer.h"
@@ -89,6 +90,9 @@
 + (void)renderTableViewCell:(UITableViewCell*)cell;
 + (void)renderTableViewCell:(UITableViewCell*)cell withClass:(NSString*)className;
 
++ (void)renderCollectionViewCell:(UICollectionViewCell*)cell;
++ (void)renderCollectionViewCell:(UICollectionViewCell*)cell withClass:(NSString*)className;
+
 + (void)renderToolbar:(UIToolbar*)bar;
 + (void)renderToolbar:(UIToolbar*)bar withClass:(NSString*)className;
 
@@ -108,6 +112,7 @@
 + (void)sizeDidChangeForNavigationBar:(UINavigationBar*)bar;
 + (void)sizeDidChangeForTabBar:(UITabBar*)bar;
 + (void)sizeDidChangeForTableViewCell:(UITableViewCell*)cell;
++ (void)sizeDidChangeForCollectionViewCell:(UITableViewCell*)cell;
 
 + (void)addOrientationDidChangeObserver:(id)observer;
 

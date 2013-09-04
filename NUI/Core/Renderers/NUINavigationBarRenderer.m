@@ -14,7 +14,9 @@
 {
     if ([NUISettings hasProperty:@"background-tint-color" withClass:className]) {
         if ([bar respondsToSelector:@selector(setBarTintColor:)]) {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_1
             [bar setBarTintColor:[NUISettings getColor:@"background-tint-color" withClass:className]];
+#endif
         } else {
             [bar setTintColor:[NUISettings getColor:@"background-tint-color" withClass:className]];
         }
@@ -50,7 +52,9 @@
         bar.backgroundColor = backgroundColor;
         
         if ([bar respondsToSelector:@selector(setBarTintColor:)]) {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_1
             bar.barTintColor = [UIColor clearColor];
+#endif
         } else {
             bar.tintColor = [UIColor clearColor];
         }

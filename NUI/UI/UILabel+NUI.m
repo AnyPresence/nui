@@ -22,21 +22,19 @@
 {
     // Styling shouldn't be applied to inherited classes or to labels within other views
     // (e.g. UITableViewCellContentView), unless nuiClass is explictly set
-    if (([self isMemberOfClass:[UILabel class]] &&
-        [[self superview] isMemberOfClass:[UIView class]]) ||
-        self.nuiClass)
-    {
+    if (([self class] == [UILabel class] &&
+        [[self superview] class] == [UIView class]) || self.nuiClass) {
         [self initNUI];
-        if (![self.nuiClass isEqualToString:kNUIClassNone]) {
+        if (![self.nuiClass isEqualToString:@"none"]) {
             [NUIRenderer renderLabel:self withClass:self.nuiClass];
         }
     }
-    self.nuiApplied = YES;
+    self.nuiIsApplied = [NSNumber numberWithBool:YES];
 }
 
 - (void)override_didMoveToWindow
 {
-    if (!self.isNUIApplied) {
+    if (!self.nuiIsApplied) {
         [self applyNUI];
     }
     

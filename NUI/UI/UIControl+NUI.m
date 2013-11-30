@@ -22,19 +22,18 @@
 {
     // Styling shouldn't be applied to inherited classes, unless nuiClass is
     // explictly set
-    if ([self isMemberOfClass:[UIControl class]] ||
-        self.nuiClass) {
+    if ([self class] == [UIControl class] || self.nuiClass) {
         [self initNUI];
-        if (![self.nuiClass isEqualToString:kNUIClassNone]) {
+        if (![self.nuiClass isEqualToString:@"none"]) {
             [NUIRenderer renderView:self withClass:self.nuiClass];
         }
     }
-    self.nuiApplied = YES;
+    self.nuiIsApplied = [NSNumber numberWithBool:YES];
 }
 
 - (void)override_didMoveToWindow
 {
-    if (!self.isNUIApplied) {
+    if (!self.nuiIsApplied) {
         [self applyNUI];
     }
     

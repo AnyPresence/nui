@@ -21,9 +21,10 @@
 - (void)applyNUI
 {
     [self initNUI];
-    if (![self.nuiClass isEqualToString:kNUIClassNone]) {
+    if (![self.nuiClass isEqualToString:@"none"]) {
         [NUIRenderer renderNavigationBar:self withClass:self.nuiClass];
         [NUIRenderer addOrientationDidChangeObserver:self];
+        
         for (UINavigationItem *navigationItem in [self items]) {
             for (UIBarButtonItem *barButtonItem in [navigationItem leftBarButtonItems]) {
                 [barButtonItem applyNUI];
@@ -33,12 +34,12 @@
             }
         }
     }
-    self.nuiApplied = YES;
+    self.nuiIsApplied = [NSNumber numberWithBool:YES];
 }
 
 - (void)override_didMoveToWindow
 {
-    if (!self.isNUIApplied) {
+    if (!self.nuiIsApplied) {
         [self applyNUI];
     }
     
@@ -49,11 +50,6 @@
     }
     
     [self override_didMoveToWindow];
-}
-
-- (void)override_dealloc {
-    [NUIRenderer removeOrientationDidChangeObserver:self];
-    [self override_dealloc];
 }
 
 - (void)orientationDidChange:(NSNotification*)notification

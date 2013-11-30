@@ -13,7 +13,7 @@
 @interface UINavigationItem (NUI)
 
 @property (nonatomic, retain) NSString* nuiClass;
-@property (nonatomic, assign, getter = isNUIApplied) BOOL nuiApplied;
+@property (nonatomic, retain) NSNumber* nuiIsApplied;
 
 - (void)applyNUI;
 

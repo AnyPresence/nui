@@ -1,10 +1,10 @@
 NUI
 ===
-Style iOS apps with a stylesheet, similar to CSS
+Style iOS apps with a style sheet, similar to CSS
 
 Description
 -----------
-NUI is a drop-in UI kit for iOS that lets you style UI elements using a stylesheet, similar to CSS. It lets you style an entire app in minutes.
+NUI is a drop-in UI kit for iOS that lets you style UI elements using a style sheet, similar to CSS. It lets you style an entire app in minutes.
 
 Out of the box, the styling looks like this:
 
@@ -19,31 +19,29 @@ It's easily modified, though. The styling above, for example, is declared [like 
 
 The styling is declared using a CSS-like syntax that supports variables:
 
-```css
-@primaryFontName: HelveticaNeue;
-@secondaryFontName: HelveticaNeue-Light;
-@primaryFontColor: #333333;
-@primaryBackgroundColor: #E6E6E6;
+    @primaryFontName: HelveticaNeue;
+    @secondaryFontName: HelveticaNeue-Light;
+    @primaryFontColor: #333333;
+    @primaryBackgroundColor: #E6E6E6;
 
-Button {
-    background-color: @primaryBackgroundColor;
-    border-color: #A2A2A2;
-    border-width: @primaryBorderWidth;
-    font-color: @primaryFontColor;
-    font-color-highlighted: #999999;
-    font-name: @primaryFontName;
-    font-size: 18;
-    corner-radius: 7;
-}
-NavigationBar {
-    background-tint-color: @primaryBackgroundColor;
-    font-name: @secondaryFontName;
-    font-size: 20;
-    font-color: @primaryFontColor;
-    text-shadow-color: #666666;
-    text-shadow-offset: 1,1;
-}
-```
+    Button {
+        background-color: @primaryBackgroundColor;
+        border-color: #A2A2A2;
+        border-width: @primaryBorderWidth;
+        font-color: @primaryFontColor;
+        font-color-highlighted: #999999;
+        font-name: @primaryFontName;
+        font-size: 18;
+        corner-radius: 7;
+    }
+    NavigationBar {
+        background-tint-color: @primaryBackgroundColor;
+        font-name: @secondaryFontName;
+        font-size: 20;
+        font-color: @primaryFontColor;
+        text-shadow-color: #666666;
+        text-shadow-offset: 1,1;
+    }
 
 NUI lets you:
 
@@ -73,15 +71,11 @@ After dropping in NUI, you can modify your app's styling by simply editing NUISt
 
 Due to the nature of UIKit's usage of simple UI components within more complex UI components, NUI doesn't style some UIKit components in some very rare cases. If you ever need to apply styling for these cases, you can simply use NUIRenderer:
 
-```objective-c
-[NUIRenderer renderButton:myButton];
-```
+    [NUIRenderer renderButton:myButton];
 
 You can specify a custom style class, too:
 
-```objective-c
-[NUIRenderer renderButton:myButton withClass:@"LargeButton"]
-```
+    [NUIRenderer renderButton:myButton withClass:@"LargeButton"]
 
 *N.B. NUI used to require that you make your elements inherit from a NUI class, but this is no longer the case. See "Migrating From Subclasses To Categories" below for details.*
 
@@ -110,52 +104,19 @@ To do this, you'll set a runtime attribute for the element (in Identity Inspecto
 
 To do this, you'll want to import the NUI category for the element. If you're styling a UIButton, you'd import:
 
-```objective-c
-#import "UIButton+NUI.h"
-```
+    #import "UIButton+NUI.h"
 
 You can then set `nuiClass` on your element:
 
-```objective-c
-myButton.nuiClass = @"LargeButton";
-```
+    myButton.nuiClass = @"LargeButton";
 
 *N.B. A style class can inherit from an indefinite number of style rules, so if you want to create groups of style rules, you can set `nuiClass` to something like `@"MyStyleGroup1:MyStyleGroup2:MyButton"`.*
 
-### Excluding Views from NUI's Styling
-
-If you want to prevent specific view classes from being styled (e.g. third party UI elements that are already styled), you can specify these in NSS:
-
-```css
-Button {
-    exclude-views: UIAlertButton;
-    exclude-subviews: UITableViewCell,TDBadgedCell,UITextField;
-}
-```
-
-* `exclude-views` will prevent NUI from applying the `Button` style to views of the specified classes
-* `exclude-subviews` will prevent NUI from applying the `Button style to subviews of views of the specified classes
-
-If you want to globally prevent specific view classes from being styled (regardless of style class), you can do this using `+[NUISettings setGlobalExclusions:]`:
-
-```objective-c
-int main(int argc, char *argv[])
-{
-    @autoreleasepool {
-        [NUISettings init];
-        [NUISettings setGlobalExclusions:@[@"ABMemberCell", @"ABMultiCell"]];
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([MyAppDelegate class]));
-    }
-}
-```
-
-### Modifying Styling While The Application Is Running
+#### Modifying Styling While The Application Is Running
 
 To do this, add the following line after `[NUISettings init];` in [main.m](https://github.com/tombenner/nui/blob/master/Demo/NUIDemo/main.m), replacing `@"/path/to/Style.nss"` with the absolute file path of your .nss file (e.g. `/Users/myusername/projects/ios/MyApp/Style.nss`):
 
-```objective-c
-[NUISettings setAutoUpdatePath:@"/path/to/Style.nss"];
-```
+    [NUISettings setAutoUpdatePath:@"/path/to/Style.nss"];
 
 Now, whenever you modify and save your .nss file while the app is running, the new changes will be applied instantaneously, without any need to rebuild the app. This can drastically speed up the process of styling. You'll want to remove this line when you create a release build.
 
@@ -178,7 +139,6 @@ Below are all of the currently available style classes, their corresponding UI c
 
 * background-color *(Color)*
 * background-color-top/background-color-bottom *(Gradient)*
-* background-color-highlighted *(Color)*
 * background-image *(Image)*
 * background-image-insets *(Box)*
 * background-tint-color *(Color)*
@@ -217,7 +177,6 @@ Below are all of the currently available style classes, their corresponding UI c
 * background-color-disabled *(Color)*
 * background-color-highlighted *(Color)*
 * background-color-selected *(Color)*
-* background-color-selected-highlighted *(Color)*
 * background-image *(Image)*
 * background-image-insets *(Box)*
 * background-image-disabled *(Image)*
@@ -226,8 +185,6 @@ Below are all of the currently available style classes, their corresponding UI c
 * background-image-highlighted-insets *(Box)*
 * background-image-selected *(Image)*
 * background-image-selected-insets *(Box)*
-* background-image-selected-highlighted *(Image)*
-* background-image-selected-highlighted-insets *(Box)*
 * border-color *(Color)*
 * border-width *(Number)*
 * content-insets *(Box)*
@@ -236,7 +193,6 @@ Below are all of the currently available style classes, their corresponding UI c
 * font-color-disabled *(Color)*
 * font-color-highlighted *(Color)*
 * font-color-selected *(Color)*
-* font-color-selected-highlighted *(Color)*
 * font-name *(FontName)*
 * font-size *(Number)*
 * height *(Number)*
@@ -249,10 +205,8 @@ Below are all of the currently available style classes, their corresponding UI c
 * text-alpha *(Number)*
 * text-auto-fit *(Boolean)*
 * text-shadow-color *(Color)*
-* text-shadow-color-disabled *(Color)*
 * text-shadow-color-highlighted *(Color)*
 * text-shadow-color-selected *(Color)*
-* text-shadow-color-selected-highlighted *(Color)*
 * text-shadow-offset *(Offset)*
 * title-insets *(Box)*
 * width *(Number)*
@@ -328,7 +282,6 @@ Below are all of the currently available style classes, their corresponding UI c
 * background-color *(Color)*
 * background-color-top/background-color-bottom *(Gradient)*
 * background-image *(Image)*
-* background-tint-color *(Color)*
 * scope-background-color *(Color)*
 * scope-background-image *(Image)*
 
@@ -358,7 +311,6 @@ See SegmentedControl
 * border-color *(Color)*
 * border-width *(Number)*
 * corner-radius *(Number)*
-* divider-color *(Color)*
 * divider-image *(Image)*
 * font-color *(Color)*
 * font-color-selected *(Color)*
@@ -417,15 +369,6 @@ See SegmentedControl
 * text-offset *(Offset)*
 * text-shadow-color *(Color)*
 * text-shadow-offset *(Offset)*
-
-#### Table
-
-*UITableView*
-
-* background-color *(Color)*
-* background-color-top/background-color-bottom *(Gradient)*
-* separator-color *(Color)*
-* separator-style *(SeparatorStyle)*
 
 #### TableCell
 
@@ -530,7 +473,6 @@ Style Value Types
 * **Image** - A name of an image, as used in `[UIImage imageNamed:name]` (e.g. `MyImage.png`).
 * **Number** - A number (e.g. `-1`, `4.5`)
 * **Offset** - Two numbers comprising the horizontal and vertical values of an offset (e.g. `-1,1`)
-* **SeparatorStyle** - A separator style, as rendered by a UITableViewSeparatorStyle. Accepted values are `none`, `single-line`, and `single-line-etched`.
 * **TextAlign** - A text alignment (e.g. `left`, `right`, `center`)
 * **VerticalAlign** - A vertical alignment (e.g. `top`, `center`, `bottom`, `fill`)
 
@@ -543,7 +485,7 @@ Contributers are extremely appreciated! NUI covers a lot of ground, but there ar
 
 #### What advantages does this have over UIAppearance?
 
-UIAppearance is alright, but it's unintuitive, time-consuming, and it doesn't support either the granularity or number of style modifications that NUI does. Styling should be abstracted in a simple stylesheet with simple property definitions; you shouldn't have to stare at long, nested method calls and have to dig through Apple's documentation every time you want to make a small styling modification.
+UIAppearance is alright, but it's unintuitive, time-consuming, and it doesn't support either the granularity or number of style modifications that NUI does. Styling should be abstracted in a simple style sheet with simple property definitions; you shouldn't have to stare at long, nested method calls and have to dig through Apple's documentation every time you want to make a small styling modification.
 
 #### I have an app that uses NUI; can I add a link to it here?
 

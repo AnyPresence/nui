@@ -7,7 +7,6 @@
 //
 
 #import "NUIConverter.h"
-#import "NUIConstants.h"
 
 @implementation NUIConverter
 
@@ -54,7 +53,7 @@
     NSArray *values = [value componentsSeparatedByCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
     values = [values filteredArrayUsingPredicate: [NSPredicate predicateWithFormat:@"SELF != ''"]];
     // edges will contain a CSS-like ordering of edges (top, right, bottom, left)
-    NSArray *edges = nil;
+    NSMutableArray *edges = [[NSMutableArray alloc] initWithCapacity:4];
     switch ([values count]) {
         case 1:
             edges = [NSArray arrayWithObjects:values[0], values[0], values[0], values[0], nil];
@@ -87,7 +86,7 @@
 
 + (UITextBorderStyle)toBorderStyle:(NSString*)value
 {
-    if ([value isEqualToString:kNUIClassNone]) {
+    if ([value isEqualToString:@"none"]) {
         return UITextBorderStyleNone;
     } else if ([value isEqualToString:@"line"]) {
         return UITextBorderStyleLine;
@@ -97,18 +96,6 @@
         return UITextBorderStyleRoundedRect;
     }
     return UITextBorderStyleNone;
-}
-
-+ (UITableViewCellSeparatorStyle)toSeparatorStyle:(NSString*)value
-{
-    if([value isEqualToString:kNUIClassNone]) {
-        return UITableViewCellSeparatorStyleNone;
-    } else if([value isEqualToString:@"single-line"]) {
-        return UITableViewCellSeparatorStyleSingleLine;
-    } else if([value isEqualToString:@"single-line-etched"]){
-        return UITableViewCellSeparatorStyleSingleLineEtched;
-    }
-    return UITableViewCellSeparatorStyleNone;
 }
 
 + (UIColor*)toColor:(NSString*)value

@@ -19,6 +19,7 @@
 
 @property(nonatomic,retain)NSString *autoUpdatePath;
 @property(nonatomic,retain)NSMutableDictionary *styles;
+@property(nonatomic,retain)NSString *extendedPropertyPrefix;
 
 + (void)init;
 + (void)initWithStylesheet:(NSString*)name;
@@ -35,7 +36,6 @@
 + (UIOffset)getOffset:(NSString*)property withClass:(NSString*)className;
 + (UIEdgeInsets)getEdgeInsets:(NSString*)property withClass:(NSString*)className;
 + (UITextBorderStyle)getBorderStyle:(NSString*)property withClass:(NSString*)className;
-+ (UITableViewCellSeparatorStyle)getSeparatorStyle:(NSString*)property withClass:(NSString*)className;
 + (UIColor*)getColor:(NSString*)property withClass:(NSString*)className;
 + (UIColor*)getColorFromImage:(NSString*)property withClass:(NSString*)className;
 + (UIImage*)getImage:(NSString*)property withClass:(NSString*)className;
@@ -46,7 +46,5 @@
 + (void)setExtendedPropertyPrefix:(NSString*)prefix;
 + (NSArray *)extendedPropertiesWithClass:(NSString*)className;
 + (NSString *)getExtendedPropertyName:(NSString*)property;
-+ (NSMutableArray*)getGlobalExclusions;
-+ (void)setGlobalExclusions:(NSArray*)globalExclusions;
 
 @end

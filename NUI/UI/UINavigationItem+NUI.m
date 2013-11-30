@@ -22,38 +22,34 @@
 - (void)applyNUI
 {
     [self initNUI];
-    if (![self.nuiClass isEqualToString:kNUIClassNone]) {
+    if (![self.nuiClass isEqualToString:@"none"]) {
         [NUIRenderer renderNavigationItem:self withClass:self.nuiClass];
     }
-    self.nuiApplied = YES;
+    self.nuiIsApplied = [NSNumber numberWithBool:YES];
 }
 
 - (void)override_didMoveToWindow
 {
-    if (!self.isNUIApplied) {
+    if (!self.nuiIsApplied) {
         [self applyNUI];
     }
     [self override_didMoveToWindow];
 }
 
 - (void)setNuiClass:(NSString*)value {
-    objc_setAssociatedObject(self, kNUIAssociatedClassKey, value, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, "nuiClass", value, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (NSString*)nuiClass {
-    return objc_getAssociatedObject(self, kNUIAssociatedClassKey);
+    return objc_getAssociatedObject(self, "nuiClass");
 }
 
-- (void)setNuiApplied:(BOOL)value {
-    
-    objc_setAssociatedObject(self, kNUIAssociatedAppliedFlagKey, [NSNumber numberWithBool:value], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    
+- (void)setNuiIsApplied:(NSNumber*)value {
+    objc_setAssociatedObject(self, "nuiIsApplied", value, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (BOOL)isNUIApplied {
-    NSNumber *nuiAppliedFlagNumber = objc_getAssociatedObject(self, kNUIAssociatedAppliedFlagKey);
-    
-    return [nuiAppliedFlagNumber boolValue];
+- (NSNumber*)nuiIsApplied {
+    return objc_getAssociatedObject(self, "nuiIsApplied");
 }
 
 @end

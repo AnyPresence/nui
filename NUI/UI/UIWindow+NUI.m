@@ -19,15 +19,15 @@
 - (void)applyNUI
 {
     [self initNUI];
-    if (![self.nuiClass isEqualToString:kNUIClassNone]) {
+    if (![self.nuiClass isEqualToString:@"none"]) {
         [NUIRenderer renderWindow:self withClass:self.nuiClass];
     }
-    self.nuiApplied = YES;
+    self.nuiIsApplied = [NSNumber numberWithBool:YES];
 }
 
 - (void)override_becomeKeyWindow
 {
-    if (!self.isNUIApplied) {
+    if (!self.nuiIsApplied) {
         [self applyNUI];
     }
     [self override_becomeKeyWindow];

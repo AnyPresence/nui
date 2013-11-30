@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "NUIConstants.h"
 #import "NUIFileMonitor.h"
 #import "NUISettings.h"
 #import "NUIBarButtonItemRenderer.h"
@@ -23,6 +24,7 @@
 #import "NUISwitchRenderer.h"
 #import "NUITabBarRenderer.h"
 #import "NUITabBarItemRenderer.h"
+#import "NUITableViewRenderer.h"
 #import "NUITableViewCellRenderer.h"
 #import "NUITextViewRenderer.h"
 #import "NUIToolbarRenderer.h"
@@ -87,6 +89,9 @@
 + (void)renderTabBarItem:(UITabBarItem*)bar;
 + (void)renderTabBarItem:(UITabBarItem*)bar withClass:(NSString*)className;
 
++ (void)renderTableView:(UITableView*)tableView;
++ (void)renderTableView:(UITableView*)tableView withClass:(NSString*)className;
+
 + (void)renderTableViewCell:(UITableViewCell*)cell;
 + (void)renderTableViewCell:(UITableViewCell*)cell withClass:(NSString*)className;
 
@@ -111,9 +116,11 @@
 
 + (void)sizeDidChangeForNavigationBar:(UINavigationBar*)bar;
 + (void)sizeDidChangeForTabBar:(UITabBar*)bar;
++ (void)sizeDidChangeForTableView:(UITableView*)tableView;
 + (void)sizeDidChangeForTableViewCell:(UITableViewCell*)cell;
 + (void)sizeDidChangeForCollectionViewCell:(UITableViewCell*)cell;
 
 + (void)addOrientationDidChangeObserver:(id)observer;
++ (void)removeOrientationDidChangeObserver:(id)observer;
 
 @end

@@ -24,12 +24,12 @@
     if ([self nuiShouldBeApplied]) {
         [NUIRenderer renderTextField:self withClass:self.nuiClass];
     }
-    self.nuiIsApplied = [NSNumber numberWithBool:YES];
+    self.nuiApplied = YES;
 }
 
 - (void)override_didMoveToWindow
 {
-    if (!self.nuiIsApplied) {
+    if (!self.isNUIApplied) {
         [self applyNUI];
     }
     
@@ -44,7 +44,7 @@
 
 - (BOOL)nuiShouldBeApplied
 {
-    if (![self.nuiClass isEqualToString:@"none"]) {
+    if (![self.nuiClass isEqualToString:kNUIClassNone]) {
         if (![[self superview] isKindOfClass:[UISearchBar class]]) {
             return YES;
         }

@@ -22,18 +22,18 @@
 {
     // Styling shouldn't be applied to inherited classes, unless nuiClass is
     // explictly set
-    if ([self class] == [UISwitch class] || self.nuiClass) {
+    if ([self isMemberOfClass:[UISwitch class]] || self.nuiClass) {
         [self initNUI];
-        if (![self.nuiClass isEqualToString:@"none"]) {
+        if (![self.nuiClass isEqualToString:kNUIClassNone]) {
             [NUIRenderer renderSwitch:self withClass:self.nuiClass];
         }
     }
-    self.nuiIsApplied = [NSNumber numberWithBool:YES];
+    self.nuiApplied = YES;
 }
 
 - (void)override_didMoveToWindow
 {
-    if (!self.nuiIsApplied) {
+    if (!self.isNUIApplied) {
         [self applyNUI];
     }
     

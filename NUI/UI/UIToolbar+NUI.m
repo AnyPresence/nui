@@ -21,19 +21,19 @@
 - (void)applyNUI
 {
     [self initNUI];
-    if (![self.nuiClass isEqualToString:@"none"]) {
+    if (![self.nuiClass isEqualToString:kNUIClassNone]) {
         [NUIRenderer renderToolbar:self withClass:self.nuiClass];
         
         for (UIBarButtonItem *barButtonItem in [self items]) {
             [barButtonItem applyNUI];
         }
     }
-    self.nuiIsApplied = [NSNumber numberWithBool:YES];
+    self.nuiApplied = YES;
 }
 
 - (void)override_didMoveToWindow
 {
-    if (!self.nuiIsApplied) {
+    if (!self.isNUIApplied) {
         [self applyNUI];
     }
     

@@ -20,19 +20,20 @@
 
 - (void)applyNUI
 {
-    if ([self class] == [UIProgressView class] || self.nuiClass) {
+    if ([self isMemberOfClass:[UIProgressView class]] || self.nuiClass) {
+        
         [self initNUI];
-        if (![self.nuiClass isEqualToString:@"none"]) {
+        if (![self.nuiClass isEqualToString:kNUIClassNone]) {
             [NUIRenderer renderProgressView:self withClass:self.nuiClass];
         }
     }
     
-    self.nuiIsApplied = [NSNumber numberWithBool:YES];
+    self.nuiApplied = YES;
 }
 
 - (void)override_didMoveToWindow
 {
-    if (!self.nuiIsApplied) {
+    if (!self.isNUIApplied) {
         [self applyNUI];
     }
     

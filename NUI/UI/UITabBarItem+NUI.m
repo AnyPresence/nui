@@ -22,34 +22,38 @@
 - (void)applyNUI
 {
     [self initNUI];
-    if (![self.nuiClass isEqualToString:@"none"]) {
+    if (![self.nuiClass isEqualToString:kNUIClassNone]) {
         [NUIRenderer renderTabBarItem:self withClass:self.nuiClass];
     }
-    self.nuiIsApplied = [NSNumber numberWithBool:YES];
+    self.nuiApplied = YES;
 }
 
 - (void)override_awakeFromNib
 {
-    if (!self.nuiIsApplied) {
+    if (!self.isNUIApplied) {
         [self applyNUI];
     }
     [self override_awakeFromNib];
 }
 
 - (void)setNuiClass:(NSString*)value {
-    objc_setAssociatedObject(self, "nuiClass", value, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, kNUIAssociatedClassKey, value, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (NSString*)nuiClass {
-    return objc_getAssociatedObject(self, "nuiClass");
+    return objc_getAssociatedObject(self, kNUIAssociatedClassKey);
 }
 
-- (void)setNuiIsApplied:(NSNumber*)value {
-    objc_setAssociatedObject(self, "nuiIsApplied", value, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setNuiApplied:(BOOL)value {
+    
+    objc_setAssociatedObject(self, kNUIAssociatedAppliedFlagKey, [NSNumber numberWithBool:value], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
 }
 
-- (NSNumber*)nuiIsApplied {
-    return objc_getAssociatedObject(self, "nuiIsApplied");
+- (BOOL)isNUIApplied {
+    NSNumber *nuiAppliedFlagNumber = objc_getAssociatedObject(self, kNUIAssociatedAppliedFlagKey);
+    
+    return [nuiAppliedFlagNumber boolValue];
 }
 
 @end

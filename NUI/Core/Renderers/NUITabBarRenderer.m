@@ -48,7 +48,18 @@
         if ([NUISettings hasProperty:@"background-color" withClass:className]) {
             backgroundColor = [NUISettings getColor:@"background-color" withClass:className];
             
-            bar.tintColor = backgroundColor;
+            UIColor * backgroundColor = bar.backgroundColor;
+            if ([NUISettings hasProperty:@"background-color" withClass:className]) {
+                backgroundColor = [NUISettings getColor:@"background-color" withClass:className];
+                
+                if ([bar respondsToSelector:@selector(setBarTintColor:)]) {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_1
+                    bar.barTintColor = backgroundColor;
+#endif
+                } else {
+                    bar.tintColor = backgroundColor;
+                }
+            }
         }
         
         UIImage * patternImage = [NUIViewRenderer backgroundPatternImage:backgroundColor withClass:className size:bar.bounds.size];

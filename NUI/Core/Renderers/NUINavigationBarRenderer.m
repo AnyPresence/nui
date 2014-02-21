@@ -49,14 +49,12 @@
     if ([NUISettings hasProperty:@"background-color" withClass:className]) {
         backgroundColor = [NUISettings getColor:@"background-color" withClass:className];
         
-        bar.backgroundColor = backgroundColor;
-        
         if ([bar respondsToSelector:@selector(setBarTintColor:)]) {
 #if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_1
-            bar.barTintColor = [UIColor clearColor];
+            bar.barTintColor = backgroundColor;
 #endif
         } else {
-            bar.tintColor = [UIColor clearColor];
+            bar.tintColor = backgroundColor;
         }
     }
 

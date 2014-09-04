@@ -48,7 +48,6 @@
         if ([NUISettings hasProperty:@"background-color" withClass:className]) {
             backgroundColor = [NUISettings getColor:@"background-color" withClass:className];
             
-            UIColor * backgroundColor = bar.backgroundColor;
             if ([NUISettings hasProperty:@"background-color" withClass:className]) {
                 backgroundColor = [NUISettings getColor:@"background-color" withClass:className];
                 

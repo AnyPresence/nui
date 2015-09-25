@@ -358,7 +358,13 @@ static NUIRenderer *instance = nil;
 
 + (void)addOrientationDidChangeObserver:(id)observer
 {
-    [[NSNotificationCenter defaultCenter] addObserver:observer selector:@selector(orientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
+  // There's no protocol for the supplied observer, so there's a warning emitted if we use the selector directly.
+  // Instead, we prepare and check the selector at runtime. A more complete fix is available in more recent NUI versions
+  SEL orientationDidChangeSelector = NSSelectorFromString(@"orientationDidChange:");
+  if ([observer respondsToSelector:orientationDidChangeSelector])
+  {
+      [[NSNotificationCenter defaultCenter] addObserver:observer selector:orientationDidChangeSelector name:UIDeviceOrientationDidChangeNotification object:nil];
+  }
 }
 
 + (void)removeOrientationDidChangeObserver:(id)observer {
@@ -368,7 +374,7 @@ static NUIRenderer *instance = nil;
 + (void)registerObject:(NSObject*)object
 {
     if ([NUISettings autoUpdateIsEnabled] && object != nil) {
-        NSString *hash = [NSString stringWithFormat:@"%d", object.hash];
+        NSString *hash = [NSString stringWithFormat:@"%d", (unsigned long)object.hash];
         NUIRenderer *instance = [self getInstance];
         if (![instance.renderedObjectIdentifiers containsObject:hash]) {
             [instance.renderedObjectIdentifiers addObject:hash];

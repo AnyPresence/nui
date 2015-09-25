@@ -59,19 +59,19 @@
         case 1:
             edges = [NSArray arrayWithObjects:values[0], values[0], values[0], values[0], nil];
             break;
-            
+
         case 2:
             edges = [NSArray arrayWithObjects:values[0], values[1], values[0], values[1], nil];
             break;
-            
+
         case 3:
             edges = [NSArray arrayWithObjects:values[0], values[1], values[2], values[1], nil];
             break;
-            
+
         case 4:
             edges = [NSArray arrayWithObjects:values[0], values[1], values[2], values[3], nil];
             break;
-            
+
         default:
             edges = [NSArray arrayWithObjects:@0, @0, @0, @0, nil];
             break;
@@ -120,23 +120,25 @@
         if ([[UIColor class] respondsToSelector:selector]) {
             // [[UIColor class] performSelector:selector] would be better here, but it causes
             // a warning: "PerformSelector may cause a leak because its selector is unknown"
-            return objc_msgSend([UIColor class], selector);
+            id (*typed_msgSend)(id, SEL) = (void *)objc_msgSend;
+            // objc_msgSend([UIColor class], selector); cause error: too many arguments to function call, expected 0, have 2
+            return typed_msgSend([UIColor class], selector);
         }
     }
-    
+
     // Remove all whitespace.
     NSString *cString = [[[value componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]
                                  componentsJoinedByString:@""]
                                  uppercaseString];
-    
+
     NSArray *hexStrings = [NUIConverter getCapturedStrings:cString
                                                withPattern:@"(?:0X|#)([0-9A-F]{6})"];
     NSArray *csStrings = [NUIConverter getCapturedStrings:cString
                                               withPattern:@"(RGB|RGBA|HSL|HSLA)\\((\\d{1,3}|[0-9.]+),(\\d{1,3}|[0-9.]+),(\\d{1,3}|[0-9.]+)(?:,(\\d{1,3}|[0-9.]+))?\\)"];
-    
+
     UIColor *color = nil;
-    
-    if (hexStrings) {        
+
+    if (hexStrings) {
         unsigned int c;
         [[NSScanner scannerWithString:[hexStrings objectAtIndex:1]] scanHexInt:&c];
         color = [UIColor colorWithRed:(float)((c >> 16) & 0xFF) / 255.0f
@@ -146,15 +148,15 @@
     } else if (csStrings) {
         BOOL isRGB = [[csStrings objectAtIndex:1] hasPrefix:@"RGB"];
         BOOL isAlpha = [[csStrings objectAtIndex:1] hasSuffix:@"A"];
-        
+
         // Color space with alpha specified but no alpha provided.
         if (isAlpha && [[csStrings objectAtIndex:5] isEqual:[NSNull null]])
             return nil;
-    
+
         CGFloat a = isAlpha ?
                     [NUIConverter parseColorComponent:[csStrings objectAtIndex:5]] :
                     1.0f;
-        
+
         if (isRGB) {
             color = [UIColor colorWithRed:[NUIConverter parseColorComponent:[csStrings objectAtIndex:2]]
                                     green:[NUIConverter parseColorComponent:[csStrings objectAtIndex:3]]
@@ -167,7 +169,7 @@
                                     alpha:a];
         }
     }
-    
+
     return color;
 }
 
@@ -208,20 +210,20 @@
 + (kTextAlignment)toTextAlignment:(NSString*)value
 {
     kTextAlignment alignment = kTextAlignmentLeft;
-    
+
     if ([value isEqualToString:@"center"]) {
         alignment =   kTextAlignmentCenter;
     } else if ([value isEqualToString:@"right"]) {
         alignment =   kTextAlignmentRight;
     }
-    
+
     return alignment;
 }
 
 + (UIControlContentHorizontalAlignment)toControlContentHorizontalAlignment:(NSString*)value
 {
     UIControlContentHorizontalAlignment alignment = UIControlContentHorizontalAlignmentLeft;
-    
+
     if ([value isEqualToString:@"center"]) {
         alignment =  UIControlContentHorizontalAlignmentCenter;
     } else if ([value isEqualToString:@"right"]) {
@@ -229,14 +231,14 @@
     } else if ([value isEqualToString:@"fill"]) {
         alignment =  UIControlContentHorizontalAlignmentFill;
     }
-    
+
     return alignment;
 }
 
 + (UIControlContentVerticalAlignment)toControlContentVerticalAlignment:(NSString*)value
 {
     UIControlContentVerticalAlignment alignment = UIControlContentVerticalAlignmentTop;
-    
+
     if ([value isEqualToString:@"center"]) {
         alignment =  UIControlContentVerticalAlignmentCenter;
     } else if ([value isEqualToString:@"bottom"]) {
@@ -244,7 +246,7 @@
     } else if ([value isEqualToString:@"fill"]) {
         alignment =  UIControlContentVerticalAlignmentFill;
     }
-    
+
     return alignment;
 }
 
@@ -255,10 +257,10 @@
 + (NSArray *)getCapturedStrings:(NSString *)content withPattern:(NSString *)pattern {
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:nil];
     NSTextCheckingResult *result = [regex firstMatchInString:content options:0 range:NSMakeRange(0, [content length])];
-    
+
     if (!result)
         return nil;
-    
+
     NSMutableArray *capturedStrings = [NSMutableArray array];
     for (NSUInteger i = 0; i <= regex.numberOfCaptureGroups; i++) {
         NSRange capturedRange = [result rangeAtIndex:i];

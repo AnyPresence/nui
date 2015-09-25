@@ -374,7 +374,7 @@ static NUIRenderer *instance = nil;
 + (void)registerObject:(NSObject*)object
 {
     if ([NUISettings autoUpdateIsEnabled] && object != nil) {
-        NSString *hash = [NSString stringWithFormat:@"%d", (unsigned long)object.hash];
+        NSString *hash = [NSString stringWithFormat:@"%ld", (unsigned long)object.hash];
         NUIRenderer *instance = [self getInstance];
         if (![instance.renderedObjectIdentifiers containsObject:hash]) {
             [instance.renderedObjectIdentifiers addObject:hash];
